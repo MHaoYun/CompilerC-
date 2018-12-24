@@ -343,10 +343,24 @@ string divCodes(QT qtEq)
             indica.push_back(stream1.str());
         }
     }
+    else if(qtEq.s[0].name=="el")
+    {
+        string top;
+        top=indica.back();
+        indica.pop_back();
+        stream1<<++divCounts[1];
+        indica.push_back("IFE"+stream1.str());
+        indica.push_back(top);
+        iCmpFn("        JMP IFE"+stream1.str());
+        cmpTmp=indica.back()+":";
+        indica.pop_back();
+    }
     else if(qtEq.s[0].name=="ie")
     {
         //int tmpCnts=types.back();
         //stream1<<tmpCnts;
+        if(cmpTmp!="")
+            iCmpFn("         ");
         cmpTmp=indica.back()+":";
         indica.pop_back();
     }
@@ -515,6 +529,7 @@ bool buildCodes()
                         {
                             if(qtS[qtPos[0]].s[qtPos[1]].L+1)
                                 iCmpFn("        MOV "+nameToAddr(rGroup[0])+",AX");
+                            rGroup[0]="";
                             iCmpFn("        MOV AX,"+nameToAddr(rGroup[0]));
                         }
                     }
@@ -523,7 +538,18 @@ bool buildCodes()
                     iCmpFn("        MOV "+funcName+",AX");
                 }
                 else
+                {
+                    if(rGroup[0]!="")
+                    {
+                        if(rGroup[0]!=qtS[i].s[1].name)
+                        {
+                            if(qtS[qtPos[0]].s[qtPos[1]].L+1)
+                                iCmpFn("        MOV "+nameToAddr(rGroup[0])+",AX");
+                            rGroup[0]="";
+                        }
+                    }
                     iCmpFn("        MOV "+funcName+","+qtS[i].s[1].name);
+                }
             }
             else if(qtS[i].s[0].name=="call")
             {
